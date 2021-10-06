@@ -9,13 +9,39 @@ use Symfony\Component\Routing\Annotation\Route;
 class HomeController extends AbstractController
 {
     /**
-     * @Route("/home", name="home")
+     * @Route("/home/list", name="home_list")
      */
-    public function index(): Response
+    public function home(): Response
     {
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/HomeController.php',
+        return $this->render('home/home.html.twig');
+    }
+
+    /**
+     * @Route("/home/new", name="home_new")
+     */
+    public function addHome(): Response
+    {
+        return $this->render('home/new.html.twig');
+    }
+
+    /**
+     * @Route("/home/list/{type}", name="home_show")
+     */
+    public function showHome(string $type): Response
+    {
+        return $this->render('home/list_home.html.twig', [
+            "type" => $type
+        ]);
+    }
+
+     /**
+     * @Route("/home/type", name="home_type")
+     */
+    public function typeHome(): Response
+    {
+        $types = ['Feu', 'Eau', 'Plante'];
+        return $this->render('home/type.html.twig', [
+            "types" => $types
         ]);
     }
 }
