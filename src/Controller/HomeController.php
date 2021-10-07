@@ -70,7 +70,21 @@ class HomeController extends AbstractController
 
         return $this->json([
             'types' => 200,
-            'message' => 'Article created !'
+            'message' => ''
+        ]);
+    }
+
+    /**
+     * @Route("/home/article/list", name="article_list")
+     */
+    public function getArticle(): Response
+    {
+
+        $em = $this->getDoctrine()->getManager();
+        $articles = $em->getRepository(Article::class)->findAll();
+
+        return $this->render('home/article/list.html.twig', [
+            'articles' => $articles
         ]);
     }
 }
