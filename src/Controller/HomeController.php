@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+use App\Entity\Comment;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -56,13 +57,20 @@ class HomeController extends AbstractController
         $article->setContent('Yeah baby, thats what i had waiting for');
         $article->setAuthorName('Nasake');
 
+        $comment = new Comment();
+        $comment->setContent('hevliqz');
+        $comment->setCreatedAt(new \DateTimeImmutable());
+
+        $article->addComment($comment);
+
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($article);
+        $entityManager->persist($comment);
         $entityManager->flush();
 
         return $this->json([
             'types' => 200,
-            'message' => 'Article created ! '
+            'message' => 'Article created !'
         ]);
     }
 }
