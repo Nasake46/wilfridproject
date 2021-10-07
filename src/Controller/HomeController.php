@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Article;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -42,6 +43,26 @@ class HomeController extends AbstractController
         $types = ['Feu', 'Eau', 'Plante'];
         return $this->render('home/type.html.twig', [
             "types" => $types
+        ]);
+    }
+
+    /**
+     * @Route("/home/article/new", name="home_artcle")
+     */
+    public function addArticle(): Response
+    {
+        $article = new Article();
+        $article->setTitle('Epitech Digital : Rentré');
+        $article->setContent('Yeah baby, thats what i had waiting for');
+        $article->setAuthorName('Nasake');
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($article);
+        $entityManager->flush();
+
+        return $this->json([
+            'types' => 200,
+            'message' => 'Article created ! '
         ]);
     }
 }
