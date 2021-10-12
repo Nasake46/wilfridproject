@@ -2,11 +2,14 @@
 
 namespace App\Controller;
 
+use App\Form\ArticleFormType;
 use App\Entity\Article;
 use App\Entity\Comment;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class HomeController extends AbstractController
 {
@@ -47,30 +50,22 @@ class HomeController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/home/article/new", name="home_artcle")
-     */
-    public function addArticle(): Response
+    #[Route('/home/article/pipou', name: 'article_new')]
+    public function formAddArticle(Request $request): Response
     {
         $article = new Article();
-        $article->setTitle('Epitech Digital : Rentré');
-        $article->setContent('Yeah baby, thats what i had waiting for');
-        $article->setAuthorName('Nasake');
+        $form = $this->createForm(ArticleFormType::class, $article);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
 
-        $comment = new Comment();
-        $comment->setContent('hevliqz');
-        $comment->setCreatedAt(new \DateTimeImmutable());
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($article);
+            $em->flush();
+        }
 
-        $article->addComment($comment);
 
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->persist($article);
-        $entityManager->persist($comment);
-        $entityManager->flush();
-
-        return $this->json([
-            'types' => 200,
-            'message' => ''
+        return $this->renderForm('home/new.html.twig', [
+            'articleForm' => $form
         ]);
     }
 
@@ -83,8 +78,10 @@ class HomeController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         $articles = $em->getRepository(Article::class)->findAll();
 
-        return $this->render('home/article/list.html.twig', [
+        return $this->render('home/article/new.html.twig', [
             'articles' => $articles
         ]);
     }
+
+    
 }
